@@ -126,6 +126,39 @@
     background: var(--amber-glow);
   }
 
+  .nav-select {
+    display: none;
+    background: var(--surface2);
+    border: 1px solid var(--amber);
+    color: var(--amber);
+    font-family: var(--cond);
+    font-size: 0.9rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 8px 12px;
+    cursor: pointer;
+    width: 100%;
+    margin-top: 10px;
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23e8920a' stroke-width='2' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    padding-right: 32px;
+  }
+
+  .nav-select option {
+    background: var(--surface);
+    color: var(--text);
+    font-size: 0.9rem;
+  }
+
+  @media (max-width: 768px) {
+    nav { display: none; }
+    .nav-select { display: block; }
+  }
+
   /* ── MAIN ── */
   main {
     max-width: 1200px;
@@ -826,7 +859,6 @@
   @media (max-width: 768px) {
     header { flex-wrap: wrap; padding: 16px; }
     h1 { font-size: 1.6rem; }
-    nav { margin-left: 0; width: 100%; }
     .phase-flow, .order-row, .tp-block { grid-template-columns: 1fr; }
     .setup-step { padding-left: 56px; }
   }
@@ -847,6 +879,14 @@
     <button onclick="show('terrain', this)">Terrain</button>
     <button onclick="show('special-rules', this)">Special Rules</button>
   </nav>
+  <select class="nav-select" onchange="showFromSelect(this)">
+    <option value="setup">Setup</option>
+    <option value="turning-point">Turning Points</option>
+    <option value="actions">Actions</option>
+    <option value="combat">Shooting &amp; Fighting</option>
+    <option value="terrain">Terrain</option>
+    <option value="special-rules">Special Rules</option>
+  </select>
 </header>
 
 <main>
@@ -1518,8 +1558,12 @@
     document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
     document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
     document.getElementById(id).classList.add('active');
-    btn.classList.add('active');
+    if (btn) btn.classList.add('active');
     window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function showFromSelect(select) {
+    show(select.value, null);
   }
 </script>
 </body>

@@ -1,0 +1,1526 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kill Team 25 — Field Reference</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@300;400;600;700;900&family=Barlow:wght@300;400;500&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d0d0f;
+    --surface: #141418;
+    --surface2: #1a1a20;
+    --border: #2a2a35;
+    --amber: #e8920a;
+    --amber-dim: #9c6208;
+    --amber-glow: rgba(232,146,10,0.12);
+    --red: #c0392b;
+    --green: #2ecc71;
+    --green-dim: #1a7a44;
+    --text: #d4d4d8;
+    --text-dim: #6b6b7a;
+    --text-bright: #f0f0f5;
+    --mono: 'Share Tech Mono', monospace;
+    --sans: 'Barlow', sans-serif;
+    --cond: 'Barlow Condensed', sans-serif;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 15px;
+    line-height: 1.5;
+    min-height: 100vh;
+  }
+
+  /* Scanline overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(0,0,0,0.03) 2px,
+      rgba(0,0,0,0.03) 4px
+    );
+    pointer-events: none;
+    z-index: 9999;
+  }
+
+  /* ── HEADER ── */
+  header {
+    background: var(--surface);
+    border-bottom: 2px solid var(--amber);
+    padding: 24px 32px 20px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    box-shadow: 0 4px 32px rgba(232,146,10,0.15);
+  }
+
+  .header-icon {
+    width: 44px;
+    height: 44px;
+    border: 2px solid var(--amber);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    color: var(--amber);
+    flex-shrink: 0;
+    clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+    background: var(--amber-glow);
+  }
+
+  h1 {
+    font-family: var(--cond);
+    font-size: 2.2rem;
+    font-weight: 900;
+    letter-spacing: 0.12em;
+    color: var(--amber);
+    text-transform: uppercase;
+    line-height: 1;
+  }
+
+  h1 span {
+    display: block;
+    font-size: 0.75rem;
+    font-weight: 300;
+    letter-spacing: 0.3em;
+    color: var(--text-dim);
+    margin-top: 3px;
+  }
+
+  nav {
+    margin-left: auto;
+    display: flex;
+    gap: 4px;
+    flex-wrap: wrap;
+  }
+
+  nav button {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+    font-family: var(--cond);
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 6px 14px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  nav button:hover, nav button.active {
+    border-color: var(--amber);
+    color: var(--amber);
+    background: var(--amber-glow);
+  }
+
+  /* ── MAIN ── */
+  main {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 32px 24px 64px;
+  }
+
+  /* ── SECTIONS ── */
+  .section {
+    display: none;
+    animation: fadeIn 0.3s ease;
+  }
+
+  .section.active { display: block; }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── SECTION HEADER ── */
+  .section-title {
+    font-family: var(--cond);
+    font-size: 2rem;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-bright);
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .section-title::after {
+    content: '';
+    flex: 1;
+    height: 2px;
+    background: linear-gradient(to right, var(--amber), transparent);
+  }
+
+  .section-subtitle {
+    color: var(--text-dim);
+    font-size: 0.9rem;
+    margin-bottom: 28px;
+    font-style: italic;
+  }
+
+  /* ── GRID ── */
+  .grid { display: grid; gap: 16px; }
+  .grid-2 { grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); }
+  .grid-3 { grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); }
+
+  /* ── CARD ── */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-top: 3px solid var(--amber);
+    padding: 20px;
+    position: relative;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+
+  .card:hover {
+    border-color: var(--amber);
+    box-shadow: 0 0 24px var(--amber-glow);
+  }
+
+  .card-number {
+    position: absolute;
+    top: -1px;
+    right: 16px;
+    background: var(--amber);
+    color: var(--bg);
+    font-family: var(--cond);
+    font-size: 0.75rem;
+    font-weight: 900;
+    padding: 2px 10px;
+    letter-spacing: 0.1em;
+  }
+
+  .card h3 {
+    font-family: var(--cond);
+    font-size: 1.15rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--amber);
+    margin-bottom: 12px;
+  }
+
+  .card p {
+    color: var(--text);
+    font-size: 0.9rem;
+    line-height: 1.6;
+  }
+
+  .card ul {
+    list-style: none;
+    padding: 0;
+    margin-top: 8px;
+  }
+
+  .card ul li {
+    font-size: 0.9rem;
+    padding: 4px 0 4px 16px;
+    position: relative;
+    color: var(--text);
+    border-bottom: 1px solid var(--border);
+    line-height: 1.5;
+  }
+
+  .card ul li:last-child { border-bottom: none; }
+
+  .card ul li::before {
+    content: '▸';
+    position: absolute;
+    left: 0;
+    color: var(--amber-dim);
+    font-size: 0.7rem;
+    top: 7px;
+  }
+
+  .card ul li strong {
+    color: var(--text-bright);
+    font-weight: 600;
+  }
+
+  /* ── ACTION CARDS ── */
+  .action-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 4px solid var(--amber);
+    padding: 16px 20px;
+    transition: all 0.2s;
+  }
+
+  .action-card:hover {
+    background: var(--surface2);
+    box-shadow: -4px 0 16px var(--amber-glow);
+  }
+
+  .action-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+  }
+
+  .action-name {
+    font-family: var(--cond);
+    font-size: 1.1rem;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-bright);
+  }
+
+  .ap-badge {
+    background: var(--amber);
+    color: var(--bg);
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 3px 10px;
+    white-space: nowrap;
+  }
+
+  .action-can {
+    font-size: 0.88rem;
+    color: var(--text);
+    margin-bottom: 8px;
+    line-height: 1.5;
+  }
+
+  .action-cannot {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 8px;
+  }
+
+  .cannot-tag {
+    background: rgba(192,57,43,0.15);
+    border: 1px solid rgba(192,57,43,0.4);
+    color: #e74c3c;
+    font-family: var(--cond);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    padding: 2px 8px;
+    text-transform: uppercase;
+  }
+
+  .cannot-label {
+    font-family: var(--cond);
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--text-dim);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 8px;
+  }
+
+  /* ── ORDER CARDS ── */
+  .order-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+
+  .order-card {
+    padding: 20px;
+    border: 1px solid var(--border);
+  }
+
+  .order-engage {
+    border-top: 3px solid var(--amber);
+    background: rgba(232,146,10,0.05);
+  }
+
+  .order-conceal {
+    border-top: 3px solid #4a9eff;
+    background: rgba(74,158,255,0.05);
+  }
+
+  .order-card h3 {
+    font-family: var(--cond);
+    font-size: 1.1rem;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 10px;
+  }
+
+  .order-engage h3 { color: var(--amber); }
+  .order-conceal h3 { color: #4a9eff; }
+
+  /* ── PHASE STEPS ── */
+  .phase-flow {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0;
+    margin-bottom: 32px;
+    border: 1px solid var(--border);
+  }
+
+  .phase-col {
+    padding: 20px;
+    border-right: 1px solid var(--border);
+  }
+
+  .phase-col:last-child { border-right: none; }
+
+  .phase-col h3 {
+    font-family: var(--cond);
+    font-size: 0.85rem;
+    font-weight: 900;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--amber);
+    margin-bottom: 14px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .phase-step {
+    display: flex;
+    gap: 10px;
+    padding: 6px 0;
+    font-size: 0.88rem;
+    color: var(--text);
+    border-bottom: 1px dashed var(--border);
+    align-items: flex-start;
+  }
+
+  .phase-step:last-child { border-bottom: none; }
+
+  .phase-step-icon {
+    color: var(--amber-dim);
+    font-size: 0.7rem;
+    flex-shrink: 0;
+    margin-top: 4px;
+  }
+
+  /* ── SPECIAL RULES TABLE ── */
+  .rules-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+  }
+
+  .rule-item {
+    background: var(--surface);
+    padding: 12px 16px;
+    transition: background 0.15s;
+  }
+
+  .rule-item:hover { background: var(--surface2); }
+
+  .rule-name {
+    font-family: var(--cond);
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--amber);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  .rule-desc {
+    font-size: 0.83rem;
+    color: var(--text);
+    margin-top: 4px;
+    line-height: 1.45;
+  }
+
+  /* ── TERRAIN ── */
+  .terrain-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 18px 20px;
+  }
+
+  .terrain-type {
+    font-family: var(--cond);
+    font-size: 1rem;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-bright);
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .terrain-tag {
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    padding: 2px 8px;
+    text-transform: uppercase;
+  }
+
+  .tag-heavy { background: rgba(192,57,43,0.2); color: #e74c3c; border: 1px solid rgba(192,57,43,0.4); }
+  .tag-light { background: rgba(46,204,113,0.15); color: #2ecc71; border: 1px solid rgba(46,204,113,0.4); }
+  .tag-info { background: rgba(74,158,255,0.15); color: #4a9eff; border: 1px solid rgba(74,158,255,0.4); }
+
+  /* ── STATUS BARS ── */
+  .status-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+
+  .status-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 14px 18px;
+    border-left: 3px solid var(--amber);
+  }
+
+  .status-card h4 {
+    font-family: var(--cond);
+    font-size: 0.95rem;
+    font-weight: 900;
+    color: var(--amber);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 8px;
+  }
+
+  .status-card p {
+    font-size: 0.85rem;
+    color: var(--text);
+    line-height: 1.5;
+  }
+
+  /* ── TIP BOX ── */
+  .tip {
+    background: var(--amber-glow);
+    border: 1px solid var(--amber-dim);
+    border-left: 4px solid var(--amber);
+    padding: 14px 18px;
+    margin: 16px 0;
+    font-size: 0.88rem;
+    color: var(--text);
+    line-height: 1.6;
+  }
+
+  .tip strong {
+    color: var(--amber);
+    font-family: var(--cond);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  /* ── SEQUENCE STEPS ── */
+  .setup-steps {
+    counter-reset: steps;
+    display: grid;
+    gap: 12px;
+  }
+
+  .setup-step {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 16px 20px 16px 64px;
+    position: relative;
+    transition: all 0.2s;
+  }
+
+  .setup-step:hover {
+    border-color: var(--amber-dim);
+    background: var(--surface2);
+  }
+
+  .setup-step::before {
+    counter-increment: steps;
+    content: counter(steps);
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 48px;
+    background: var(--amber);
+    color: var(--bg);
+    font-family: var(--cond);
+    font-size: 1.5rem;
+    font-weight: 900;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .setup-step h4 {
+    font-family: var(--cond);
+    font-size: 1rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-bright);
+    margin-bottom: 6px;
+  }
+
+  .setup-step p, .setup-step ul {
+    font-size: 0.87rem;
+    color: var(--text);
+  }
+
+  .setup-step ul {
+    list-style: none;
+    margin-top: 6px;
+  }
+
+  .setup-step ul li {
+    padding-left: 14px;
+    position: relative;
+    padding-bottom: 2px;
+    line-height: 1.5;
+  }
+
+  .setup-step ul li::before {
+    content: '–';
+    position: absolute;
+    left: 0;
+    color: var(--amber-dim);
+  }
+
+  /* ── TURNING POINT ── */
+  .tp-block {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    margin-bottom: 24px;
+  }
+
+  .tp-phase {
+    background: var(--surface);
+    padding: 18px;
+  }
+
+  .tp-phase-title {
+    font-family: var(--cond);
+    font-size: 0.75rem;
+    font-weight: 900;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--amber);
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .tp-phase-num {
+    background: var(--amber);
+    color: var(--bg);
+    font-size: 0.65rem;
+    font-weight: 900;
+    width: 18px;
+    height: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .tp-item {
+    font-size: 0.84rem;
+    color: var(--text);
+    padding: 5px 0;
+    border-bottom: 1px dashed var(--border);
+    line-height: 1.4;
+  }
+
+  .tp-item:last-child { border-bottom: none; }
+
+  .tp-item em {
+    color: var(--text-dim);
+    font-style: italic;
+  }
+
+  /* ── PERSPECTIVE SPLIT ── */
+  .pov-block {
+    border: 1px solid var(--border);
+    background: var(--surface);
+    margin-bottom: 16px;
+    overflow: hidden;
+  }
+
+  .pov-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 18px;
+    background: var(--surface2);
+    border-bottom: 1px solid var(--border);
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .pov-action-name {
+    font-family: var(--cond);
+    font-size: 1.15rem;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-bright);
+  }
+
+  .pov-meta {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .pov-body {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .pov-body.triple {
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+
+  .pov-col {
+    padding: 14px 18px;
+    border-right: 1px solid var(--border);
+  }
+
+  .pov-col:last-child { border-right: none; }
+
+  .pov-label {
+    font-family: var(--cond);
+    font-size: 0.68rem;
+    font-weight: 900;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .pov-label::before {
+    content: '';
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .pov-you .pov-label { color: #4a9eff; }
+  .pov-you .pov-label::before { background: #4a9eff; }
+
+  .pov-opp .pov-label { color: #e74c3c; }
+  .pov-opp .pov-label::before { background: #e74c3c; }
+
+  .pov-both .pov-label { color: #2ecc71; }
+  .pov-both .pov-label::before { background: #2ecc71; }
+
+  .pov-item {
+    font-size: 0.85rem;
+    color: var(--text);
+    padding: 5px 0;
+    border-bottom: 1px dashed var(--border);
+    line-height: 1.45;
+  }
+
+  .pov-item:last-child { border-bottom: none; }
+
+  .pov-item strong { color: var(--text-bright); }
+  .pov-item em { color: var(--text-dim); font-style: italic; }
+
+  .pov-item.cannot {
+    color: #e74c3c;
+    opacity: 0.85;
+  }
+
+  .pov-item.cannot::before {
+    content: '✗ ';
+    font-weight: 700;
+  }
+
+  .pov-item.can::before {
+    content: '✓ ';
+    color: #2ecc71;
+    font-weight: 700;
+  }
+
+  .pov-divider {
+    font-family: var(--cond);
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    padding: 10px 18px 4px;
+    border-top: 1px solid var(--border);
+    margin-top: 6px;
+  }
+
+  /* ── MODIFIER TABLE ── */
+  .mod-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.88rem;
+    margin-top: 12px;
+  }
+
+  .mod-table th {
+    font-family: var(--cond);
+    font-size: 0.75rem;
+    font-weight: 900;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--amber);
+    padding: 8px 12px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    text-align: left;
+  }
+
+  .mod-table td {
+    padding: 8px 12px;
+    border: 1px solid var(--border);
+    color: var(--text);
+    line-height: 1.4;
+  }
+
+  .mod-table tr:hover td {
+    background: var(--surface2);
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    text-align: center;
+    padding: 24px;
+    color: var(--text-dim);
+    font-size: 0.78rem;
+    border-top: 1px solid var(--border);
+    font-family: var(--mono);
+    letter-spacing: 0.1em;
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 768px) {
+    header { flex-wrap: wrap; padding: 16px; }
+    h1 { font-size: 1.6rem; }
+    nav { margin-left: 0; width: 100%; }
+    .phase-flow, .order-row, .tp-block { grid-template-columns: 1fr; }
+    .setup-step { padding-left: 56px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-icon">⚔</div>
+  <h1>Kill Team 25
+    <span>Quick Reference — Field Manual</span>
+  </h1>
+  <nav>
+    <button class="active" onclick="show('setup', this)">Setup</button>
+    <button onclick="show('turning-point', this)">Turning Points</button>
+    <button onclick="show('actions', this)">Actions</button>
+    <button onclick="show('combat', this)">Shooting &amp; Fighting</button>
+    <button onclick="show('terrain', this)">Terrain</button>
+    <button onclick="show('special-rules', this)">Special Rules</button>
+  </nav>
+</header>
+
+<main>
+
+  <!-- ══════════ SETUP ══════════ -->
+  <section id="setup" class="section active">
+    <div class="section-title">Battle Setup</div>
+    <p class="section-subtitle">Do these steps in order before the game starts. Both players do each step together unless stated otherwise.</p>
+
+    <div class="setup-steps">
+
+      <div class="setup-step">
+        <h4>Prepare the Battlefield</h4>
+        <ul>
+          <li><strong>Both players</strong> agree on which Kill Teams they are using for this battle.</li>
+          <li><strong>Both players together</strong> set up the terrain on the board to create the battlefield (called the Killzone).</li>
+          <li><strong>Both players together</strong> place the objective markers — the tokens on the board that both sides will be fighting to control.</li>
+        </ul>
+      </div>
+
+      <div class="setup-step">
+        <h4>Decide Who Goes First</h4>
+        <ul>
+          <li><strong>Both players</strong> each roll a dice. The player who rolls highest wins — this is called winning <strong>Initiative</strong>. Re-roll any ties.</li>
+          <li>The player who <strong>won</strong> the roll chooses which side of the board they want to deploy on (called the drop zone).</li>
+          <li>The player who <strong>lost</strong> the roll receives a re-roll card, which lets them force a re-roll of the Initiative dice at the start of a later round.</li>
+        </ul>
+      </div>
+
+      <div class="setup-step">
+        <h4>Choose Your Operatives — Secretly</h4>
+        <ul>
+          <li><strong>Each player</strong> privately decides which individual fighters (operatives) from their Kill Team they are bringing to this battle.</li>
+          <li>The player who <strong>won Initiative</strong> reveals one of their chosen operatives first, then the other player reveals one of theirs. Continue alternating until all operatives have been revealed.</li>
+        </ul>
+      </div>
+
+      <div class="setup-step">
+        <h4>Choose Your Equipment — Secretly</h4>
+        <ul>
+          <li><strong>Each player</strong> privately picks up to <strong>4 equipment items</strong> from their Kill Team's equipment list. You can only take each type of equipment once — no duplicates.</li>
+          <li>The player who <strong>won Initiative</strong> reveals one equipment item first, then the other player reveals one of theirs. Continue alternating until all equipment has been revealed.</li>
+        </ul>
+      </div>
+
+      <div class="setup-step">
+        <h4>Receive Starting Command Points</h4>
+        <ul>
+          <li><strong>Both players</strong> receive <strong>2 Command Points (CP)</strong> each. CP are a currency you spend during the game — for example, to re-roll a single dice. Track yours with tokens or a notepad.</li>
+        </ul>
+      </div>
+
+      <div class="setup-step">
+        <h4>Choose Your Secret Bonus Objective (Tac Op)</h4>
+        <ul>
+          <li><strong>Each player</strong> privately picks one <strong>Tactical Objective (Tac Op)</strong> from the list tied to their Kill Team's style of play (archetype). Don't reveal it yet.</li>
+          <li>This is an extra way to score Victory Points on top of the main board objectives. Completing it is a pleasant surprise for your opponent.</li>
+        </ul>
+      </div>
+
+      <div class="setup-step">
+        <h4>Place Your Operatives on the Board</h4>
+        <ul>
+          <li>First, both players assign equipment to their individual operatives one item at a time, alternating between players.</li>
+          <li>Then place operatives on the board. The player who <strong>won Initiative</strong> places one operative first, then the other player places one, and you alternate.</li>
+          <li>Place roughly <strong>one third of your team per round of placement</strong> (round fractions up). So if you have 10 operatives, you place 4, then 4, then 2.</li>
+          <li>Every operative starts the game in <strong>Conceal Order</strong> — they are lying low and cannot be shot at while they are in cover.</li>
+        </ul>
+      </div>
+
+      <div class="setup-step">
+        <h4>Begin the Game — Turning Point 1</h4>
+        <ul>
+          <li>The game is played over <strong>4 Turning Points</strong> (think of them as rounds).</li>
+          <li>Right now, <strong>each player</strong> secretly picks their <strong>Primary Objective</strong>. This is your main scoring goal for the game and doubles as your Strategic Gambit (a declaration of intent) for this first Turning Point. Keep it hidden until the rules say to reveal it.</li>
+        </ul>
+      </div>
+
+      <div class="setup-step">
+        <h4>End of Battle — Who Wins?</h4>
+        <ul>
+          <li>After all 4 Turning Points are complete, <strong>both players</strong> count up their <strong>Victory Points</strong>. You earn these throughout the game by controlling objective markers, completing your Tac Op, and other in-game achievements.</li>
+          <li>The player with the <strong>most Victory Points</strong> wins. In the event of a tie, the player who scored more points in the final Turning Point wins.</li>
+        </ul>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ══════════ TURNING POINTS ══════════ -->
+  <section id="turning-point" class="section">
+    <div class="section-title">How a Round Works (Turning Points)</div>
+    <p class="section-subtitle">The game is played over 4 rounds, called Turning Points. Each round has 3 phases that happen in order. The first round skips Phase 1 — you already decided who goes first during setup.</p>
+
+    <div class="tip">
+      <strong>Turning Point 1 only:</strong> Skip straight to Phase 2 — the Initiative Phase already happened during setup, so there's no need to repeat it.
+    </div>
+
+    <div class="tp-block">
+      <div class="tp-phase">
+        <div class="tp-phase-title"><div class="tp-phase-num">1</div> Initiative Phase <em style="font-size:0.68rem;color:var(--text-dim);margin-left:4px">— skip in Round 1</em></div>
+        <div class="tp-item"><strong>Both players</strong> roll a dice to see who has the advantage this round — the higher roller wins Initiative.</div>
+        <div class="tp-item">Some Kill Teams give bonuses to this roll — apply those now. If a player has a re-roll card, they can use it here instead of rolling normally.</div>
+        <div class="tp-item">If both players roll the same number, the player who does <em>not</em> currently have Initiative wins the tie.</div>
+        <div class="tp-item">The player who <strong>wins</strong> chooses who acts first this round.</div>
+        <div class="tp-item">The player who <strong>loses</strong> receives a +/– Turn card, which they can use to adjust the turn order later.</div>
+      </div>
+      <div class="tp-phase">
+        <div class="tp-phase-title"><div class="tp-phase-num">2</div> Strategy Phase</div>
+        <div class="tp-item"><strong>Both players</strong> receive <strong>1 Command Point (CP)</strong> each. The player who does not have Initiative receives a bonus <strong>+1 CP</strong> (so 2 total) as compensation.</div>
+        <div class="tp-item"><strong>Both players</strong> flip all their operatives back to ready — every fighter can act again this round.</div>
+        <div class="tp-item"><strong>Both players</strong> may now play Strategic Gambits — special cards or abilities that apply a bonus for the round ahead.</div>
+      </div>
+      <div class="tp-phase">
+        <div class="tp-phase-title"><div class="tp-phase-num">3</div> Firefight Phase — the main action</div>
+        <div class="tp-item">Players alternate activating one operative at a time, starting with the player who has Initiative.</div>
+        <div class="tp-item">When it's your turn, pick one of your ready operatives, choose its order (Engage or Conceal), then spend its Action Points to do things — move, shoot, fight, etc.</div>
+        <div class="tp-item">Once an operative has activated, it is no longer ready this round. Keep going until <strong>every operative on both sides</strong> has activated.</div>
+        <div class="tp-item">If one player runs out of ready operatives before the other, they may use <strong>Counteract</strong> instead of skipping entirely (see the Actions tab).</div>
+      </div>
+    </div>
+
+    <div class="grid grid-2">
+      <div class="card">
+        <h3>Command Re-roll — costs 1 CP</h3>
+        <ul>
+          <li>After you or your opponent rolls any attack or defence dice, <strong>either player</strong> can spend 1 CP to pick up <strong>one die and re-roll it</strong>.</li>
+          <li>You can do this multiple times on the same roll — each re-roll costs 1 CP.</li>
+          <li>This is your main tool for turning a bad roll around, so spend CP wisely.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Limits on Modifying Stats</h3>
+        <p style="font-size:0.86rem;color:var(--text-dim);margin-bottom:10px">Various abilities can improve or worsen an operative's characteristics, but each stat has a cap to stop things getting out of hand:</p>
+        <ul>
+          <li><strong>Action Points (APL):</strong> Can only ever be changed by +1 or –1, never more.</li>
+          <li><strong>Move distance:</strong> Can never be reduced below <strong>4″</strong>, no matter what.</li>
+          <li><strong>HIT (attack accuracy):</strong> At most 1 fail result per every 6 success results.</li>
+          <li><strong>Defence dice:</strong> Can only be reduced by a maximum of 1 die.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════ ACTIONS ══════════ -->
+  <section id="actions" class="section">
+    <div class="section-title">Actions</div>
+    <p class="section-subtitle">When it's your turn to activate an operative, first choose its Order, then spend its Action Points (AP) to do things. You cannot perform the same action twice in a single activation.</p>
+
+    <div class="tip" style="margin-bottom:20px">
+      <strong>What is Control Range?</strong> Every operative has an invisible bubble extending <strong>1″ in all directions</strong> around it. If an enemy is inside your Control Range, you are "Engaged" in melee with them. This affects several actions — moving freely, shooting, and more.
+    </div>
+
+    <!-- Orders -->
+    <div class="order-row" style="margin-bottom:24px">
+      <div class="order-card order-engage">
+        <h3>⚔ Engage Order</h3>
+        <div style="font-size:0.86rem;color:var(--text-dim);margin-bottom:10px">Choose this when you want your operative to fight, shoot, or move aggressively this activation.</div>
+        <div class="pov-item can" style="font-size:0.88rem;padding:5px 0">Your operative can take <strong>any action</strong> — move, shoot, fight, pick up markers, anything.</div>
+        <div class="pov-item" style="font-size:0.88rem;padding:5px 0;color:#e8920a">⚠ Your operative can be targeted by enemy shooting even if it is behind cover.</div>
+      </div>
+      <div class="order-card order-conceal">
+        <h3>🛡 Conceal Order</h3>
+        <div style="font-size:0.86rem;color:var(--text-dim);margin-bottom:10px">Choose this when you want your operative to stay hidden and safe rather than fighting.</div>
+        <div class="pov-item cannot" style="font-size:0.88rem;padding:5px 0;color:#e74c3c">Your operative <strong>cannot Shoot or Charge</strong> this activation.</div>
+        <div class="pov-item" style="color:#2ecc71;font-size:0.88rem;padding:5px 0">✓ If your operative is behind cover, enemies <strong>cannot target it with shooting at all</strong> — they simply can't fire at it.</div>
+      </div>
+    </div>
+
+    <!-- REPOSITION -->
+    <div class="pov-block">
+      <div class="pov-header">
+        <div class="pov-action-name">Reposition</div>
+        <div class="pov-meta"><div class="ap-badge">1 AP</div></div>
+      </div>
+      <div class="pov-body triple">
+        <div class="pov-col pov-you">
+          <div class="pov-label">What you do</div>
+          <div class="pov-item">Move your operative up to its full <strong>Move distance</strong> (shown on its datacard) in any direction.</div>
+          <div class="pov-item">This is a careful, deliberate movement — useful for getting behind cover or moving around the board without committing to a fight.</div>
+        </div>
+        <div class="pov-col pov-opp">
+          <div class="pov-label">What your opponent does</div>
+          <div class="pov-item">Nothing — your opponent has no reaction to this move. They just watch.</div>
+        </div>
+        <div class="pov-col pov-both">
+          <div class="pov-label">When you can't use it</div>
+          <div class="pov-item cannot">You cannot Reposition if you are currently within 1″ of any enemy (you're Engaged in melee — use Fall Back instead).</div>
+          <div class="pov-item cannot">You cannot move through a space within 1″ of an enemy either, unless that enemy is already being held in place (Controlled) by one of your other operatives.</div>
+          <div class="pov-item cannot">You cannot use Reposition if you already used Fall Back or Charge this activation.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CHARGE -->
+    <div class="pov-block">
+      <div class="pov-header">
+        <div class="pov-action-name">Charge</div>
+        <div class="pov-meta"><div class="ap-badge">1 AP</div></div>
+      </div>
+      <div class="pov-body triple">
+        <div class="pov-col pov-you">
+          <div class="pov-label">What you do</div>
+          <div class="pov-item">Rush towards an enemy. You move up to your normal Move distance <strong>plus an extra 2″</strong>.</div>
+          <div class="pov-item">You <strong>must end the move within 1″ of an enemy operative</strong> — that's what makes it a Charge rather than just a normal move.</div>
+          <div class="pov-item">You are now locked in melee (Engaged) with them. You can immediately spend another AP to Fight them.</div>
+        </div>
+        <div class="pov-col pov-opp">
+          <div class="pov-label">What your opponent does</div>
+          <div class="pov-item">Nothing right now — there is no free counter-attack when charged.</div>
+          <div class="pov-item">However, they are now Engaged with you too. On <em>their</em> next activation, they can spend 1 AP to Fight you back.</div>
+          <div class="pov-item">Neither of you can walk away freely — you both need to use Fall Back (2 AP) to disengage.</div>
+        </div>
+        <div class="pov-col pov-both">
+          <div class="pov-label">When you can't use it</div>
+          <div class="pov-item cannot">You must be on <strong>Engage Order</strong> — you cannot Charge if you chose Conceal Order this activation.</div>
+          <div class="pov-item cannot">You cannot Charge if you have already used Reposition, Fall Back, or Dash this activation.</div>
+          <div class="pov-item cannot">You cannot Charge if an enemy currently has you pinned in place (Controlled).</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FALL BACK -->
+    <div class="pov-block">
+      <div class="pov-header">
+        <div class="pov-action-name">Fall Back</div>
+        <div class="pov-meta"><div class="ap-badge">2 AP</div></div>
+      </div>
+      <div class="pov-body triple">
+        <div class="pov-col pov-you">
+          <div class="pov-label">What you do</div>
+          <div class="pov-item">Break away from melee and retreat. Move up to your full Move distance.</div>
+          <div class="pov-item">To use this, you must currently be within 1″ of an enemy (Engaged in melee). You must end the move <strong>more than 1″ away from every enemy</strong> on the board.</div>
+          <div class="pov-item">This is the <strong>only safe way to exit melee</strong> — doing so costs 2 AP but you don't get struck.</div>
+        </div>
+        <div class="pov-col pov-opp">
+          <div class="pov-label">What your opponent does</div>
+          <div class="pov-item">Nothing — there is <strong>no free strike</strong> in Kill Team when you retreat. You safely leave melee without being hit.</div>
+          <div class="pov-item">Your opponent will need to spend their own AP to come after you again on their activation.</div>
+        </div>
+        <div class="pov-col pov-both">
+          <div class="pov-label">Restrictions</div>
+          <div class="pov-item cannot">Costs <strong>2 AP</strong> — twice as much as most movement actions.</div>
+          <div class="pov-item cannot">You cannot use Fall Back if you have already used Reposition or Charge this activation.</div>
+          <div class="pov-item cannot">You must fully escape — you cannot end the move still within 1″ of any enemy.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DASH -->
+    <div class="pov-block">
+      <div class="pov-header">
+        <div class="pov-action-name">Dash</div>
+        <div class="pov-meta"><div class="ap-badge">1 AP</div></div>
+      </div>
+      <div class="pov-body triple">
+        <div class="pov-col pov-you">
+          <div class="pov-label">What you do</div>
+          <div class="pov-item">Take a short, quick movement — move up to your Move distance, but <strong>no more than 3″</strong> total, regardless of how fast your operative normally is.</div>
+          <div class="pov-item">Useful for ducking behind a piece of cover nearby, or making a small adjustment without spending 2 AP on a full move.</div>
+        </div>
+        <div class="pov-col pov-opp">
+          <div class="pov-label">What your opponent does</div>
+          <div class="pov-item">Nothing — no reaction to a Dash.</div>
+        </div>
+        <div class="pov-col pov-both">
+          <div class="pov-label">Restrictions</div>
+          <div class="pov-item cannot">Maximum movement is always <strong>3″</strong>, even if your operative's Move stat is higher than that.</div>
+          <div class="pov-item cannot">You cannot Dash if you have already Charged this activation.</div>
+          <div class="pov-item cannot">You cannot Dash through a space within 1″ of an enemy operative.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SHOOT -->
+    <div class="pov-block">
+      <div class="pov-header">
+        <div class="pov-action-name">Shoot</div>
+        <div class="pov-meta"><div class="ap-badge">1 AP</div></div>
+      </div>
+      <div class="pov-body triple">
+        <div class="pov-col pov-you">
+          <div class="pov-label">What you do — the attacker</div>
+          <div class="pov-item">Pick an enemy operative you can see (called Line of Sight — an unobstructed view to any part of their model).</div>
+          <div class="pov-item">Check they are a valid target: enemies on Conceal Order who are behind cover <strong>cannot be targeted at all</strong>.</div>
+          <div class="pov-item">Roll your weapon's attack dice. Any die that meets or beats your weapon's HIT value counts as a hit. A roll of 6 is always a <strong>Critical Hit</strong> — more powerful than a normal hit.</div>
+          <div class="pov-item">You can now apply any special weapon rules (listed on the weapon) to improve your results before your opponent responds.</div>
+        </div>
+        <div class="pov-col pov-opp">
+          <div class="pov-label">What your opponent does — the defender</div>
+          <div class="pov-item">Roll your operative's <strong>defence dice</strong> (the number is on their datacard). Each successful save blocks one incoming hit.</div>
+          <div class="pov-item">You may discard one Critical result from your own defence roll if you want — sometimes a normal save is more useful than a Critical one.</div>
+          <div class="pov-item">If your operative is <strong>in cover</strong> (within 1″ of cover terrain, more than 2″ from the shooter), you automatically keep one extra normal save for free.</div>
+          <div class="pov-item">If your operative is <strong>Obscured</strong> — meaning the line between them and the shooter passes more than 1″ away from both operatives — the attacker must throw away one of their hits, and they cannot use Critical hits against you.</div>
+        </div>
+        <div class="pov-col pov-both">
+          <div class="pov-label">Resolving the damage — both players</div>
+          <div class="pov-item"><strong>Critical hits go first.</strong> The defender can only block a Critical hit with a Critical save. Normal saves cannot stop Crits.</div>
+          <div class="pov-item">Then normal hits are resolved — these can be blocked by any remaining saves.</div>
+          <div class="pov-item">Each hit that isn't blocked deals the weapon's damage value — subtract that from the target's wounds total.</div>
+          <div class="pov-item">Either player can spend <strong>1 CP to re-roll one die</strong> during their own roll step. You can do this multiple times but each re-roll costs 1 CP.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FIGHT -->
+    <div class="pov-block">
+      <div class="pov-header">
+        <div class="pov-action-name">Fight</div>
+        <div class="pov-meta"><div class="ap-badge">1 AP</div></div>
+      </div>
+      <div class="pov-body triple">
+        <div class="pov-col pov-you">
+          <div class="pov-label">What you do — the attacker</div>
+          <div class="pov-item">Strike an enemy in close combat. Your operative must already be within 1″ of the target (they must be Engaged — you need to have Charged them, or they Charged you).</div>
+          <div class="pov-item">Roll your operative's <strong>melee weapon attack dice</strong> and apply any Fight-specific special rules.</div>
+          <div class="pov-item"><strong>Gang up bonus:</strong> If any of your other operatives are also within 1″ of the same enemy (and aren't themselves being pinned by a different foe), you get <strong>+1 to your HIT value</strong> for each one. Lower HIT = easier to hit.</div>
+        </div>
+        <div class="pov-col pov-opp">
+          <div class="pov-label">What your opponent does — the defender</div>
+          <div class="pov-item">Roll your operative's <strong>defence dice</strong>, same as when being shot.</div>
+          <div class="pov-item"><strong>Key melee rule:</strong> Only a <strong>Critical save</strong> can block a Critical hit in melee. Normal saves are useless against Crits here — this is different from shooting.</div>
+          <div class="pov-item">Normal hits can still be blocked by any remaining normal or Critical saves.</div>
+        </div>
+        <div class="pov-col pov-both">
+          <div class="pov-label">Notes</div>
+          <div class="pov-item">Damage resolves the same way as shooting — Crits first, then normal hits, each unblocked hit deals damage.</div>
+          <div class="pov-item cannot">Special case — fighting through a <strong>doorway</strong>: neither operative can be touching the doorway frame, and the target must be more than 2″ away from the door.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PICK UP MARKER -->
+    <div class="pov-block">
+      <div class="pov-header">
+        <div class="pov-action-name">Pick Up Marker</div>
+        <div class="pov-meta"><div class="ap-badge">1 AP</div></div>
+      </div>
+      <div class="pov-body">
+        <div class="pov-col pov-you">
+          <div class="pov-label">What you do</div>
+          <div class="pov-item">Grab a <strong>Controlled marker</strong> (an objective token that has been secured and is ready to pick up). Your operative now carries it — the marker travels with them wherever they move.</div>
+          <div class="pov-item">You'll usually want to then carry it somewhere safe or place it to score points.</div>
+          <div class="pov-item cannot">You cannot pick up a marker if you are already carrying one — one at a time only.</div>
+          <div class="pov-item cannot">You cannot pick up and then place a marker in the same activation.</div>
+          <div class="pov-item cannot">You cannot pick up a marker if an enemy operative currently has your operative pinned (Controlled).</div>
+        </div>
+        <div class="pov-col pov-opp">
+          <div class="pov-label">What your opponent does</div>
+          <div class="pov-item">Nothing right now — but they'll want to eliminate your carrier before they can safely deliver the marker.</div>
+          <div class="pov-item"><strong>If your carrier is taken out of action (incapacitated):</strong> they automatically drop the marker where they fell. Any operative — including your opponent's — can then place it for <strong>0 AP</strong>.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PLACE MARKER -->
+    <div class="pov-block">
+      <div class="pov-header">
+        <div class="pov-action-name">Place Marker</div>
+        <div class="pov-meta"><div class="ap-badge">1 AP</div> <span style="font-size:0.75rem;color:var(--text-dim);font-family:var(--mono)">free if incapacitated</span></div>
+      </div>
+      <div class="pov-body">
+        <div class="pov-col pov-you">
+          <div class="pov-label">What you do</div>
+          <div class="pov-item">Set down a marker you are currently carrying. Place it anywhere within 1″ of your operative.</div>
+          <div class="pov-item"><strong>Special case:</strong> If your operative was just taken out of action (incapacitated) while carrying a marker, they automatically drop it right where they fell — this costs <strong>0 AP</strong> and happens immediately.</div>
+          <div class="pov-item cannot">You cannot place a marker in the same activation you picked one up — pick up first, place next activation.</div>
+        </div>
+        <div class="pov-col pov-opp">
+          <div class="pov-label">What your opponent does</div>
+          <div class="pov-item">Nothing at the moment of placement.</div>
+          <div class="pov-item">On their next activation, they can try to contest or take control of the marker themselves.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- COUNTERACT -->
+    <div class="tip" style="margin-top:4px">
+      <strong>What if you run out of operatives to activate?</strong> If your opponent still has ready operatives but all of yours have already acted this round, you don't just sit there frozen. Instead, you can use <strong>Counteract</strong>: pick any 1 AP action and perform it with any one of your operatives, but any movement is capped at 2″. You cannot use Counteract to switch an operative to Conceal Order.
+    </div>
+
+  </section>
+
+  <!-- ══════════ COMBAT ══════════ -->
+  <section id="combat" class="section">
+    <div class="section-title">Shooting &amp; Fighting in Detail</div>
+    <p class="section-subtitle">A step-by-step walkthrough of what both players actually do when a Shoot or Fight action happens.</p>
+
+    <!-- Targeting Check -->
+    <div class="pov-block">
+      <div class="pov-header">
+        <div class="pov-action-name">Step 1 — Before You Roll: Can You Even Target Them?</div>
+      </div>
+      <div class="pov-body triple">
+        <div class="pov-col pov-you">
+          <div class="pov-label">The attacker checks first</div>
+          <div class="pov-item">Can you <strong>see</strong> the target? Draw an imaginary line from your operative to any part of the enemy model. If that line isn't completely blocked by solid terrain, you have Line of Sight.</div>
+          <div class="pov-item">Are you on <strong>Engage Order</strong>? You cannot shoot if you chose Conceal Order this activation.</div>
+          <div class="pov-item">Is an enemy operative <strong>holding your operative in place</strong> (you are Controlled)? If so, you cannot shoot.</div>
+          <div class="pov-item">Is the target being <strong>held in place by one of your own operatives</strong> (target is Controlled)? If so, you can't shoot them either — don't shoot your own side's prisoners.</div>
+        </div>
+        <div class="pov-col pov-opp">
+          <div class="pov-label">The defender's stance changes everything</div>
+          <div class="pov-item"><strong>On Engage Order:</strong> They can be shot as long as you can see them. ✓</div>
+          <div class="pov-item"><strong>On Conceal Order, NOT behind cover:</strong> They can still be shot if you can see them. ✓</div>
+          <div class="pov-item"><strong>On Conceal Order AND behind cover:</strong> They <em>cannot be targeted at all</em>. Your operative cannot fire at them this activation — full stop. ✗</div>
+        </div>
+        <div class="pov-col pov-both">
+          <div class="pov-label">How to check if someone is "in cover"</div>
+          <div class="pov-item">The defender must be within <strong>1″ of a piece of cover terrain</strong> that the imaginary target line passes through or near.</div>
+          <div class="pov-item">The defender must also be <strong>more than 2″ away from the shooter</strong> — being right next to someone means the cover isn't helping.</div>
+          <div class="pov-item">Both conditions must be true at the same time for the defender to count as In Cover.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Attack Roll -->
+    <div class="pov-block">
+      <div class="pov-header">
+        <div class="pov-action-name">Step 2 — The Attacker Rolls Their Dice</div>
+      </div>
+      <div class="pov-body">
+        <div class="pov-col pov-you">
+          <div class="pov-label">The attacker rolls and improves their dice</div>
+          <div class="pov-item">Roll the number of dice shown on your weapon profile (e.g. "4 attack dice").</div>
+          <div class="pov-item">Any die showing a number <strong>equal to or higher than your weapon's HIT value</strong> is a hit. A <strong>6 is always a Critical Hit</strong> (regardless of HIT value) — Crits are more powerful and harder to block than normal hits.</div>
+          <div class="pov-item">Now apply any weapon special rules that let you re-roll or change dice — for example, <strong>Balanced</strong> lets you re-roll one die, <strong>Relentless</strong> lets you re-roll as many as you like.</div>
+          <div class="pov-item">You can also spend <strong>1 Command Point to re-roll any one die</strong>. You can do this multiple times but each costs 1 CP.</div>
+        </div>
+        <div class="pov-col pov-opp">
+          <div class="pov-label">The defender waits</div>
+          <div class="pov-item">Don't roll your defence dice yet — wait for the attacker to finish and lock in their final attack results.</div>
+          <div class="pov-item">Pay attention to special weapon rules: <strong>Blast</strong> hits all visible operatives nearby the target, and <strong>Torrent</strong> can target multiple operatives at once — you might be caught in the blast even if you're not the main target.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Defence Roll -->
+    <div class="pov-block">
+      <div class="pov-header">
+        <div class="pov-action-name">Step 3 — The Defender Rolls Their Dice</div>
+      </div>
+      <div class="pov-body triple">
+        <div class="pov-col pov-opp">
+          <div class="pov-label">The defender rolls and improves their dice</div>
+          <div class="pov-item">Roll your operative's defence dice — the number is on their datacard (e.g. "3 defence dice").</div>
+          <div class="pov-item">You may <strong>voluntarily discard one Critical result</strong> from your own defence roll if you want. Sometimes a normal save is more strategically useful than a Critical one — it depends on what the attacker rolled.</div>
+          <div class="pov-item">You can spend <strong>1 CP to re-roll any one die</strong>.</div>
+        </div>
+        <div class="pov-col pov-both">
+          <div class="pov-label">Bonuses that help the defender</div>
+          <div class="pov-item"><strong>In Cover:</strong> The defender gets one extra normal save for free — added on top of whatever they rolled. No extra dice needed, it's automatic.</div>
+          <div class="pov-item"><strong>Obscured:</strong> The attacker must discard one of their hits before comparing dice, and they cannot use their Critical hits at all against an Obscured target. A target is Obscured when the line between shooter and target passes more than 1″ away from the target, AND the shooter is also more than 1″ away from that midpoint.</div>
+        </div>
+        <div class="pov-col pov-you">
+          <div class="pov-label">Attacker abilities that strip the defender's protection</div>
+          <div class="pov-item"><strong>Saturate:</strong> The defender cannot use their cover save at all — being in cover does nothing.</div>
+          <div class="pov-item"><strong>Seek X:</strong> The defender can't count a specific terrain type as cover for this attack, but their cover save from other sources still applies.</div>
+          <div class="pov-item"><strong>Piercing X:</strong> The defender rolls X fewer defence dice — fewer chances to block hits.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Resolve -->
+    <div class="pov-block">
+      <div class="pov-header">
+        <div class="pov-action-name">Step 4 — Work Out the Damage</div>
+      </div>
+      <div class="pov-body triple">
+        <div class="pov-col pov-you">
+          <div class="pov-label">The attacker resolves hits</div>
+          <div class="pov-item"><strong>Critical hits go first.</strong> The defender can only stop a Critical hit with a Critical save. Normal saves are useless against Crits — they simply don't count.</div>
+          <div class="pov-item">After Crits are settled, <strong>normal hits</strong> are resolved. These can be blocked by any remaining saves — normal or Critical.</div>
+          <div class="pov-item">Every hit that isn't blocked deals the <strong>weapon's normal damage value</strong> in wounds to the target.</div>
+        </div>
+        <div class="pov-col pov-opp">
+          <div class="pov-label">The defender takes wounds</div>
+          <div class="pov-item">Match your saves against incoming hits starting with Crits, then normals.</div>
+          <div class="pov-item">Subtract the total unblocked damage from your operative's wound total (shown on their datacard).</div>
+          <div class="pov-item">If wounds reach <strong>0 or below</strong>, the operative is <strong>incapacitated</strong> — they are removed from the game.</div>
+          <div class="pov-item">If wounds drop <strong>below half their starting value</strong> (but they're still alive), place an <strong>Injury token</strong> on them. For the rest of the game: their HIT value worsens by 1 (harder to land hits) and their Move distance reduces by 2″.</div>
+        </div>
+        <div class="pov-col pov-both">
+          <div class="pov-label">Good to know</div>
+          <div class="pov-item">Either player can spend CP to re-roll dice — attackers in Step 2, defenders in Step 3. You cannot go back and re-roll earlier steps.</div>
+          <div class="pov-item">Stat modifiers have hard limits no matter how many abilities stack up: APL can only change by ±1 total · Move can never go below 4″ · HIT can't be worse than 1 fail per 6 successes · Defence dice can only be reduced by a maximum of 1.</div>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- ══════════ TERRAIN ══════════ -->
+  <section id="terrain" class="section">
+    <div class="section-title">Terrain</div>
+    <p class="section-subtitle">The battlefield is full of terrain pieces. Each type works differently — understanding them helps you position your operatives to survive longer and shoot more effectively.</p>
+
+    <div class="grid grid-2" style="margin-bottom:24px">
+      <div class="terrain-card">
+        <div class="terrain-type">Heavy Terrain <span class="terrain-tag tag-heavy">Cover + Obscure</span></div>
+        <p style="font-size:0.87rem;color:var(--text)">Big solid objects like walls, wrecked vehicles, and large crates. They provide <strong>cover</strong> (extra saves when shot at) and can also make your operative <strong>Obscured</strong> (attacker loses a hit and can't use Crits). Only one piece of terrain can provide the Obscured benefit per attack — you can't stack it.</p>
+      </div>
+      <div class="terrain-card">
+        <div class="terrain-type">Light Terrain <span class="terrain-tag tag-light">Cover Only</span></div>
+        <p style="font-size:0.87rem;color:var(--text)">Smaller objects like barricades, low walls, and barrels. They provide <strong>cover</strong> (extra saves when shot at) but do <em>not</em> make you Obscured — your attacker still gets all their hits, they just have a harder time getting through your saves.</p>
+      </div>
+      <div class="terrain-card">
+        <div class="terrain-type">Accessible Terrain <span class="terrain-tag tag-info">Movement Penalty</span></div>
+        <p style="font-size:0.87rem;color:var(--text)">Difficult ground like rubble, thick undergrowth, or shallow water. Moving <em>through</em> it costs an extra <strong>1″ of your movement allowance</strong> — so crossing 2″ of rubble costs 3″ of Move. Plan ahead so you don't get caught short.</p>
+      </div>
+      <div class="terrain-card">
+        <div class="terrain-type">Vantage Point <span class="terrain-tag tag-info">Height Advantage</span></div>
+        <ul style="list-style:none;margin-top:8px">
+          <li style="font-size:0.85rem;padding:4px 0;border-bottom:1px dashed var(--border)">Being elevated above your target gives you combat advantages when attacking with Engage Order.</li>
+          <li style="font-size:0.85rem;padding:4px 0;border-bottom:1px dashed var(--border)">If your target is at least <strong>2″ lower</strong> than you: your attacks gain <strong>Accurate 1</strong> (retain 1 attack die as a hit).</li>
+          <li style="font-size:0.85rem;padding:4px 0;border-bottom:1px dashed var(--border)">If your target is at least <strong>4″ lower</strong> than you: your attacks gain <strong>Accurate 2</strong> (retain 2 attack dice as hits).</li>
+          <li style="font-size:0.85rem;padding:4px 0;border-bottom:1px dashed var(--border)">If you are on a Vantage Point on Conceal Order in Light Cover and the shooter is at least 2″ below you: they ignore your cover, but you still keep 1 Critical save or 2 normal saves.</li>
+          <li style="font-size:0.85rem;padding:4px 0;border-bottom:1px dashed var(--border)">The <strong>floor surface</strong> of a Vantage Point itself counts as Light Cover.</li>
+          <li style="font-size:0.85rem;padding:4px 0">When working out if a target on a Vantage Point is Obscured, you ignore any heavy parts of the vantage terrain itself — only other terrain counts.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="section-title" style="font-size:1.3rem;margin-top:8px">Moving Around Terrain</div>
+    <p style="color:var(--text-dim);font-size:0.88rem;margin:8px 0 20px">Some terrain can be climbed, dropped from, or jumped across. Here's exactly how each works.</p>
+
+    <div class="grid grid-3" style="margin-top:16px">
+      <div class="card">
+        <h3>🧗 Climbing Up</h3>
+        <ul>
+          <li>Your operative must be within <strong>1″ of a climbable surface</strong> — not every terrain piece can be climbed, only those marked as climbable.</li>
+          <li>The height you're climbing must be at least <strong>2″ tall</strong> — you can't climb tiny bumps.</li>
+          <li>You cannot stop partway up the climb, and you cannot use the Dash action to climb.</li>
+          <li>The vertical distance counts against your Move distance for the activation.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>⬇ Dropping Down</h3>
+        <ul>
+          <li>Move your operative completely off the top of a terrain piece and drop vertically downward.</li>
+          <li>The <strong>first 2″ of the drop is free</strong> — it doesn't cost any of your Move distance.</li>
+          <li>Any distance beyond 2″ costs movement as normal. A 5″ drop would cost 3″ of Move.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>↗ Jumping Across</h3>
+        <ul>
+          <li>Leap horizontally across a gap. Move up to <strong>4″ in a straight line</strong>.</li>
+          <li>You can land on terrain that is up to <strong>1″ higher</strong> than where you jumped from.</li>
+          <li>The horizontal distance counts against your Move distance.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════ SPECIAL RULES ══════════ -->
+  <section id="special-rules" class="section">
+    <div class="section-title">Weapon Special Rules</div>
+    <p class="section-subtitle">Weapons in Kill Team often have special rules that change how their attacks work. These are printed on your operative's datacard next to the weapon. Here's what each one means in plain terms.</p>
+
+    <div class="rules-grid">
+      <div class="rule-item">
+        <div class="rule-name">Accurate X</div>
+        <div class="rule-desc">After rolling your attack dice, you can automatically treat X of those dice as normal hits, regardless of what they actually showed. You can use this on up to 2 dice total across all Accurate abilities.</div>
+      </div>
+      <div class="rule-item">
+        <div class="rule-name">Balanced</div>
+        <div class="rule-desc">After rolling your attack dice, you can pick up <strong>one die</strong> and re-roll it. Useful for trying to turn a miss into a hit or a hit into a Critical.</div>
+      </div>
+      <div class="rule-item">
+        <div class="rule-name">Blast X</div>
+        <div class="rule-desc">When you shoot, you hit your primary target <em>and</em> every other visible enemy operative within X″ of that target — all at the same time. All secondary targets use the same Cover and Obscure calculation as the primary target.</div>
+      </div>
+      <div class="rule-item">
+        <div class="rule-name">Brutal</div>
+        <div class="rule-desc">The defender can only use Critical saves to block your hits. Their normal save results are completely useless against this weapon — only their best saves matter.</div>
+      </div>
+      <div class="rule-item">
+        <div class="rule-name">Ceaseless</div>
+        <div class="rule-desc">After rolling your attack dice, you can re-roll any number of dice that all show the <em>same</em> result — for example, if three dice all show a 2, you can re-roll all three of them. You can't mix and match different results.</div>
+      </div>
+      <div class="rule-item">
+        <div class="rule-name">Devastating X</div>
+        <div class="rule-desc">Each Critical hit you land instantly deals X damage directly, before saves are applied. If your target was within Y″ of you before you activated Devastating, that same X damage also hits every visible enemy in range Y″.</div>
+      </div>
+      <div class="rule-item">
+        <div class="rule-name">Heavy (X)</div>
+        <div class="rule-desc">This weapon is too bulky to use on the move. If your operative moved earlier in this activation, you cannot use this weapon. And if you use this weapon, your operative cannot move for the rest of the activation. Exception: the X move type listed on the weapon is still allowed.</div>
+      </div>
+      <div class="rule-item">
+        <div class="rule-name">Hot</div>
+        <div class="rule-desc">Before using this weapon, roll a D6. If the result is lower than your weapon's HIT value, the weapon overheats and your own operative takes damage equal to double the roll. It's powerful but risky.</div>
+      </div>
+      <div class="rule-item">
+        <div class="rule-name">Lethal X+</div>
+        <div class="rule-desc">This weapon scores Critical hits on any attack die showing X or higher — not just on a 6. For example, Lethal 5+ means rolls of 5 or 6 both count as Crits.</div>
+      </div>
+      <div class="rule-item">
+        <div class="rule-name">Limited X</div>
+        <div class="rule-desc">This weapon or ability has limited ammunition. It can only be used a total of <strong>X times across the entire battle</strong> — once it's been used X times, it's gone for the rest of the game.</div>
+      </div>
+      <div class="rule-item">
+        <div class="rule-name">Piercing X</div>
+        <div class="rule-desc">This weapon punches through armour. The defender rolls <strong>X fewer defence dice</strong> than normal, giving them fewer chances to block your hits.</div>
+      </div>
+      <div class="rule-item">
+        <div class="rule-name">Piercing Crit X</div>
+        <div class="rule-desc">Same as Piercing X, but it only applies <strong>if you retained at least one Critical hit</strong> in your attack roll. If you have no Crits, it does nothing.</div>
+      </div>
+      <div class="rule-item">
+        <div class="rule-name">Punishing</div>
+        <div class="rule-desc">If your attack roll contains at least one Critical hit, you can also treat one of your failed attack dice as a normal hit. Crits unlock a bonus hit.</div>
+      </div>
+      <div class="rule-item">
+        <div class="rule-name">Range X</div>
+        <div class="rule-desc">This weapon can only target enemies within X″ of your operative. Targets further away than X″ are simply out of range and cannot be selected.</div>
+      </div>
+      <div class="rule-item">
+        <div class="rule-name">Relentless</div>
+        <div class="rule-desc">After rolling your attack dice, you can re-roll <strong>as many dice as you want</strong> — pick up any or all of them and roll again. Very powerful for increasing reliability.</div>
+      </div>
+      <div class="rule-item">
+        <div class="rule-name">Rending</div>
+        <div class="rule-desc">If your attack roll contains at least one Critical hit, you can also upgrade one of your normal hits into a Critical hit. More Crits means the defender needs more Critical saves to stop you.</div>
+      </div>
+      <div class="rule-item">
+        <div class="rule-name">Saturate</div>
+        <div class="rule-desc">The defender cannot use the cover save bonus from being in cover. Being behind a wall doesn't help against this weapon — they still roll their normal defence dice, they just don't get the free extra save.</div>
+      </div>
+      <div class="rule-item">
+        <div class="rule-name">Seek X</div>
+        <div class="rule-desc">The defender cannot count terrain type X as cover for this attack — your weapon can see through or around it. However, the defender still keeps their cover save if they have cover from other terrain sources.</div>
+      </div>
+      <div class="rule-item">
+        <div class="rule-name">Severe</div>
+        <div class="rule-desc">If your attack roll has <em>no</em> Critical hits at all, you can change one of your normal hits into a Critical hit. Gives you a guaranteed Crit floor. Has no extra effect if you also have Punishing or Rending.</div>
+      </div>
+      <div class="rule-item">
+        <div class="rule-name">Shock</div>
+        <div class="rule-desc">The first Critical hit you score in each fight sequence also forces the defender to discard one of their unresolved normal hits (or a Critical hit if they have no normal hits left). You're essentially destroying their ability to retaliate.</div>
+      </div>
+      <div class="rule-item">
+        <div class="rule-name">Silent</div>
+        <div class="rule-desc">Normally operatives on Conceal Order cannot Shoot. This weapon is an exception — your operative can fire it even while on Conceal Order, without giving up their hidden status.</div>
+      </div>
+      <div class="rule-item">
+        <div class="rule-name">Stun</div>
+        <div class="rule-desc">Each Critical hit you land reduces the target's Action Point Limit (APL) by 1 until the end of their <em>next</em> activation. Fewer AP means they can do less on their next turn.</div>
+      </div>
+      <div class="rule-item">
+        <div class="rule-name">Torrent X</div>
+        <div class="rule-desc">Pick a primary target, then also pick any other valid targets within X″ of that primary target. You then perform your Shoot action against all of them simultaneously — great for spraying a group of clustered enemies.</div>
+      </div>
+    </div>
+
+    <div class="tip" style="margin-top:20px">
+      <strong>Tip for new players:</strong> You don't need to memorise all of these. Just read your own operative's datacards before the game and look up the ones on your weapons. Your opponent's abilities are on their cards too — you're allowed to read them whenever you want during the game.
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  KILL TEAM 25 — QUICK REFERENCE v2.06 &nbsp;|&nbsp; Based on u/armagonix cheat sheet &nbsp;|&nbsp; Not official GW content
+</footer>
+
+<script>
+  function show(id, btn) {
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    btn.classList.add('active');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+</script>
+</body>
+</html>
